@@ -1,34 +1,37 @@
 package tasks;
 
 import controller.CentralSoldadura;
+import controller.CintaTransportadora;
 import controller.SupervisorCentral;
 
 public class RobotTask implements Runnable {
+    private int id;
     private CentralSoldadura centralSoldadura;
+    private CintaTransportadora cintaTransportadora;
     private SupervisorCentral supervisorCentral;
 
-    public RobotTask(CentralSoldadura centralSoldadura, SupervisorCentral supervisorCentral) {
+    public RobotTask(int id, CentralSoldadura centralSoldadura, CintaTransportadora cintaTransportadora,
+            SupervisorCentral supervisorCentral) {
+        this.id = id;
         this.centralSoldadura = centralSoldadura;
+        this.cintaTransportadora = cintaTransportadora;
         this.supervisorCentral = supervisorCentral;
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < 10; i++) {
-            // Agafar bateria
-            try {
-                centralSoldadura.accedirCentral();
-                System.out.println("Robot accedeix a central de Soldadura");
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                supervisorCentral.verificarEstat(id);
+                String bateria = cintaTransportadora.retirarBateria(id);
+                int numEstacio = centralSoldadura.accedirCentral(id);
                 Thread.sleep(1000);
-                System.out.println("Robot lliura la central de Soldadura");
-                centralSoldadura.lliurarCentral();
-                supervisorCentral.accedirTaulerCentral();
-                Thread.sleep(500);
-                System.out.println("Robot reb certificat de qualitat");
-                supervisorCentral.lliurarTaulerCentral();
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
+                centralSoldadura.lliurarCentral(id, numEstacio);
+                centralSoldadura.registreCentral(id);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println(e.getMessage());
         }
     }
 
