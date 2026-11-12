@@ -41,8 +41,8 @@ public class RobotTask implements Runnable {
                 centralSoldadura.registreCentral(id);
             }
         } catch (InterruptedException e) {
+            estat = "ATURAT";
             Thread.currentThread().interrupt();
-            System.out.println(e.getMessage());
         }
     }
 

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import controller.CentralSoldadura;
@@ -15,6 +16,7 @@ public class App {
         CintaTransportadora cintaTransportadora = new CintaTransportadora();
         SupervisorCentral supervisorCentral = new SupervisorCentral();
         SupervisorTask supervisorTask = new SupervisorTask(supervisorCentral);
+        int duracioPrograma = 20000;
 
         List<RobotTask> robotTasks = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
@@ -38,10 +40,30 @@ public class App {
             agvs.get(i).start();
         }
 
+        Thread.sleep(duracioPrograma);
+        dashboardThread.interrupt();
+        supervisorTaskThread.interrupt();
+        for (int i = 0; i < robots.size(); i++) {
+            robots.get(i).interrupt();
+            agvs.get(i).interrupt();
+        }
+
         supervisorTaskThread.join();
         for (int i = 0; i < robots.size(); i++) {
             robots.get(i).join();
             agvs.get(i).join();
         }
+
+        StringBuilder resum = new StringBuilder();
+        resum.append("\n======= SIMULACIÓ FINALITZADA =======\n");
+        resum.append("Durada: " + (duracioPrograma / 1000) + " s\n");
+        resum.append("Cotxos fets: " + centralSoldadura.getCotxosFets() + "\n");
+        resum.append("Estacions finals: " + Arrays.toString(centralSoldadura.getEstacions()) + "\n");
+        resum.append("Bateries a la cinta: " + cintaTransportadora.getQuantitatBateries()
+                + "/" + cintaTransportadora.getMaximBateries() + "\n");
+        for (RobotTask r : robotTasks) {
+            resum.append("Robot " + r.getId() + ": " + r.getEstat() + "\n");
+        }
+        System.out.println(resum);
     }
 }
