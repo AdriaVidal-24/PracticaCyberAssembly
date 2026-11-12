@@ -31,9 +31,12 @@ public class RobotTask implements Runnable {
                 cintaTransportadora.retirarBateria();
                 estat = "ESPERANT_ESTACIÓ";
                 int numEstacio = centralSoldadura.accedirCentral(id);
-                estat = "SOLDANT";
-                Thread.sleep(1000);
-                centralSoldadura.lliurarCentral(id, numEstacio);
+                try {
+                    estat = "SOLDANT";
+                    Thread.sleep(1000);
+                } finally {
+                    centralSoldadura.lliurarCentral(id, numEstacio);
+                }
                 estat = "REGISTRANT";
                 centralSoldadura.registreCentral(id);
             }
