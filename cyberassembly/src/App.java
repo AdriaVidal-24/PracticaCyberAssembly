@@ -7,6 +7,7 @@ import controller.SupervisorCentral;
 import tasks.AGVTask;
 import tasks.RobotTask;
 import tasks.SupervisorTask;
+import view.Dashboard;
 
 public class App {
     public static void main(String[] args) throws InterruptedException {
@@ -15,14 +16,22 @@ public class App {
         SupervisorCentral supervisorCentral = new SupervisorCentral();
         SupervisorTask supervisorTask = new SupervisorTask(supervisorCentral);
 
+        List<RobotTask> robotTasks = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            robotTasks.add(new RobotTask(i, centralSoldadura, cintaTransportadora, supervisorCentral));
+        }
         List<Thread> robots = new ArrayList<>();
         List<Thread> agvs = new ArrayList<>();
         Thread supervisorTaskThread = new Thread(supervisorTask);
         for (int i = 1; i <= 10; i++) {
-            robots.add(new Thread(new RobotTask(i, centralSoldadura, cintaTransportadora, supervisorCentral)));
+            robots.add(new Thread(robotTasks.get(i - 1)));
             agvs.add(new Thread(new AGVTask(cintaTransportadora)));
         }
+        Dashboard dashboard = new Dashboard(centralSoldadura, cintaTransportadora, supervisorCentral, robotTasks);
 
+        Thread dashboardThread = new Thread(dashboard);
+        dashboardThread.setDaemon(true);
+        dashboardThread.start();
         supervisorTaskThread.start();
         for (int i = 0; i < robots.size(); i++) {
             robots.get(i).start();

@@ -29,7 +29,6 @@ public class CentralSoldadura {
     public void registreCentral(int id) throws InterruptedException {
         mutex.acquire();
         try {
-            System.out.println("El robot " + id + " está qualificat.");
             cotxosFets++;
         } finally {
             mutex.release();

@@ -11,11 +11,9 @@ public class SupervisorCentral {
 
     public synchronized void activarAlerta() {
         alerta = true;
-        System.out.println("ALERTA!");
     }
     
     public synchronized void resoldreAlerta() {
-        System.out.println("NO ALERTA!");
         alerta = false;
         notifyAll();
     }
