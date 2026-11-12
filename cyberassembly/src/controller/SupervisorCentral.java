@@ -1,15 +1,22 @@
 package controller;
 
-import java.util.concurrent.Semaphore;
-
 public class SupervisorCentral {
-    private Semaphore mutex = new Semaphore(1);
+    private boolean alerta = false;
 
-    public void accedirTaulerCentral() throws InterruptedException {
-        mutex.acquire();
+    public synchronized void verificarEstat(int id) throws InterruptedException {
+        while (alerta) {
+            wait();
+        }
     }
 
-    public void lliurarTaulerCentral() throws InterruptedException {
-        mutex.release();
+    public synchronized void activarAlerta() {
+        alerta = true;
+        System.out.println("ALERTA!");
+    }
+    
+    public synchronized void resoldreAlerta() {
+        System.out.println("NO ALERTA!");
+        alerta = false;
+        notifyAll();
     }
 }
