@@ -1,10 +1,12 @@
 package controller;
 
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class CentralSoldadura {
     private int N;
     private int[] llistatEstacions;
+    private volatile int cotxosFets = 0;
     private Semaphore sem;
     private Semaphore mutex = new Semaphore(1);
 
@@ -28,6 +30,7 @@ public class CentralSoldadura {
         mutex.acquire();
         try {
             System.out.println("El robot " + id + " está qualificat.");
+            cotxosFets++;
         } finally {
             mutex.release();
         }
@@ -44,6 +47,14 @@ public class CentralSoldadura {
     }
 
     private synchronized void sortirLlistaEstacions(int numEstacio) {
-                llistatEstacions[numEstacio] = 0;
-     }
+        llistatEstacions[numEstacio] = 0;
+    }
+
+    public synchronized int[] getEstacions() {
+        return Arrays.copyOf(llistatEstacions, llistatEstacions.length);
+    }
+
+    public int getCotxosFets() {
+        return cotxosFets;
+    }
 }

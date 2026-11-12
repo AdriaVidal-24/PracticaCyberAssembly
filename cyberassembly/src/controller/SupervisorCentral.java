@@ -19,4 +19,8 @@ public class SupervisorCentral {
         alerta = false;
         notifyAll();
     }
+
+    public synchronized boolean getAlerta() {
+        return alerta;
+    }
 }

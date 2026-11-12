@@ -9,6 +9,7 @@ public class RobotTask implements Runnable {
     private CentralSoldadura centralSoldadura;
     private CintaTransportadora cintaTransportadora;
     private SupervisorCentral supervisorCentral;
+    private volatile String estat = "INICIANT";
 
     public RobotTask(int id, CentralSoldadura centralSoldadura, CintaTransportadora cintaTransportadora,
             SupervisorCentral supervisorCentral) {
@@ -22,17 +23,32 @@ public class RobotTask implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
+                if(supervisorCentral.getAlerta()) {
+                    estat = "PAUSAT";
+                }
                 supervisorCentral.verificarEstat(id);
+                estat = "ESPERANT_BATERIA";
                 String bateria = cintaTransportadora.retirarBateria(id);
+                estat = "ESPERANT_ESTACIÓ";
                 int numEstacio = centralSoldadura.accedirCentral(id);
+                estat = "SOLDANT";
                 Thread.sleep(1000);
                 centralSoldadura.lliurarCentral(id, numEstacio);
+                estat = "REGISTRANT";
                 centralSoldadura.registreCentral(id);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.out.println(e.getMessage());
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getEstat() {
+        return estat;
     }
 
 }

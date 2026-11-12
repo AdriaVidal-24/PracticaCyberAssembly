@@ -13,7 +13,8 @@ public class CintaTransportadora {
     public void afegirBateria(int id, int comptador) throws InterruptedException {
         lock.lock();
         try {
-            while (quantitatBateries == maximBateries) cintaNoPlena.await();
+            while (quantitatBateries == maximBateries)
+                cintaNoPlena.await();
             quantitatBateries++;
             cintaNoBuida.signal();
         } finally {
@@ -24,12 +25,26 @@ public class CintaTransportadora {
     public String retirarBateria(int id) throws InterruptedException {
         lock.lock();
         try {
-            while(quantitatBateries == 0) cintaNoBuida.await();
+            while (quantitatBateries == 0)
+                cintaNoBuida.await();
             quantitatBateries--;
             cintaNoPlena.signal();
         } finally {
             lock.unlock();
         }
         return "bateria";
+    }
+
+    public int getQuantitatBateries() {
+        lock.lock();
+        try {
+            return quantitatBateries;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int getMaximBateries() {
+        return maximBateries;
     }
 }
