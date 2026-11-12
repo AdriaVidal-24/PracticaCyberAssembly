@@ -23,12 +23,12 @@ public class RobotTask implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                if(supervisorCentral.getAlerta()) {
+                if (supervisorCentral.getAlerta()) {
                     estat = "PAUSAT";
                 }
                 supervisorCentral.verificarEstat(id);
                 estat = "ESPERANT_BATERIA";
-                String bateria = cintaTransportadora.retirarBateria(id);
+                cintaTransportadora.retirarBateria();
                 estat = "ESPERANT_ESTACIÓ";
                 int numEstacio = centralSoldadura.accedirCentral(id);
                 estat = "SOLDANT";

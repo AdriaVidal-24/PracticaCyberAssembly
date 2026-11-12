@@ -4,20 +4,16 @@ import controller.CintaTransportadora;
 
 public class AGVTask implements Runnable {
     private CintaTransportadora cintaTransportadora;
-    private int id;
-    private int comptadorBateries = 0;
 
-    public AGVTask(CintaTransportadora cintaTransportadora, int id) {
+    public AGVTask(CintaTransportadora cintaTransportadora) {
         this.cintaTransportadora = cintaTransportadora;
-        this.id = id;
     }
 
     @Override
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                cintaTransportadora.afegirBateria(id, comptadorBateries);
-                comptadorBateries++;
+                cintaTransportadora.afegirBateria();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

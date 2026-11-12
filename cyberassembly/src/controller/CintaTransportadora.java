@@ -10,7 +10,7 @@ public class CintaTransportadora {
     private final Condition cintaNoPlena = lock.newCondition();
     private final Condition cintaNoBuida = lock.newCondition();
 
-    public void afegirBateria(int id, int comptador) throws InterruptedException {
+    public void afegirBateria() throws InterruptedException {
         lock.lock();
         try {
             while (quantitatBateries == maximBateries)
@@ -22,7 +22,7 @@ public class CintaTransportadora {
         }
     }
 
-    public String retirarBateria(int id) throws InterruptedException {
+    public void retirarBateria() throws InterruptedException {
         lock.lock();
         try {
             while (quantitatBateries == 0)
@@ -32,7 +32,6 @@ public class CintaTransportadora {
         } finally {
             lock.unlock();
         }
-        return "bateria";
     }
 
     public int getQuantitatBateries() {
