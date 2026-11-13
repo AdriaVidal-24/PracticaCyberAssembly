@@ -56,4 +56,35 @@ public class CentralSoldadura {
     public int getCotxosFets() {
         return cotxosFets;
     }
+
+    public synchronized int esperarAvaria() throws InterruptedException {
+        int estacioAvariada = -1;
+        while(estacioAvariada == -1) {
+            for (int i = 0; i<llistatEstacions.length; i++) {
+                if(llistatEstacions[i] == -1) estacioAvariada = i;
+            }
+            if(estacioAvariada == -1) {
+                wait();
+            } else {
+                return estacioAvariada;
+            }
+        }
+        return estacioAvariada;
+    }
+
+    public void rompreEstacio() {
+        if(sem.tryAcquire()) {
+            notificarAvaria();
+        }
+    }
+    
+    private synchronized void notificarAvaria() {
+        accesLlistaEstacions(-1);
+        notifyAll();
+    }
+
+    public void repararEstacio(int estacio) {
+        sortirLlistaEstacions(estacio);
+        sem.release();
+    }
 }

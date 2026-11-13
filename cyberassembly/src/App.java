@@ -8,7 +8,9 @@ import controller.CintaTransportadora;
 import controller.SupervisorCentral;
 import tasks.AGVTask;
 import tasks.RobotTask;
+import tasks.SensorAvariesTask;
 import tasks.SupervisorTask;
+import tasks.TecnicManteniment;
 import view.Dashboard;
 
 public class App {
@@ -25,6 +27,8 @@ public class App {
         CintaTransportadora cintaTransportadora = new CintaTransportadora(maximBateries);
         SupervisorCentral supervisorCentral = new SupervisorCentral();
         SupervisorTask supervisorTask = new SupervisorTask(supervisorCentral);
+        TecnicManteniment tecnicManteniment = new TecnicManteniment(centralSoldadura);
+        SensorAvariesTask sensorAvariesTask = new SensorAvariesTask(centralSoldadura);
         int duracioPrograma = 20000;
         
         List<RobotTask> robotTasks = new ArrayList<>();
@@ -42,12 +46,17 @@ public class App {
             agvs.add(new Thread(new AGVTask(cintaTransportadora)));
         }
         
-        
-        Thread supervisorTaskThread = new Thread(supervisorTask);
         Dashboard dashboard = new Dashboard(centralSoldadura, cintaTransportadora, supervisorCentral, robotTasks);
+        
+        Thread sensorAvariesThread = new Thread(sensorAvariesTask);
+        Thread tecnicMantenimentThread = new Thread(tecnicManteniment);
+        Thread supervisorTaskThread = new Thread(supervisorTask);
         Thread dashboardThread = new Thread(dashboard);
         dashboardThread.setDaemon(true);
+        sensorAvariesThread.setDaemon(true);
 
+        sensorAvariesThread.start();
+        tecnicMantenimentThread.start();
         dashboardThread.start();
         supervisorTaskThread.start();
         for (int i = 0; i < robots.size(); i++) {
@@ -59,6 +68,7 @@ public class App {
 
         Thread.sleep(duracioPrograma);
         dashboardThread.interrupt();
+        tecnicMantenimentThread.interrupt();
         supervisorTaskThread.interrupt();
         for (int i = 0; i < robots.size(); i++) {
             robots.get(i).interrupt();
@@ -68,6 +78,7 @@ public class App {
         }
 
         supervisorTaskThread.join();
+        tecnicMantenimentThread.join();
         for (int i = 0; i < robots.size(); i++) {
             robots.get(i).join();
         }
