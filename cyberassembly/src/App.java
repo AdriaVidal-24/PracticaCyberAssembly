@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,11 +16,11 @@ public class App {
     public static void main(String[] args) throws InterruptedException {
         // PARÀMETRES
         Scanner scanner = new Scanner(System.in);
-        int quantCentrals = llegirEnter(scanner, "Quantes centrals de soldadura es volen?");
-        int maximBateries = llegirEnter(scanner, "Quina capacitat de bateries té la cinta?");
-        int quantRobots = llegirEnter(scanner, "Quants robots es volen a la vegada?");
-        int quantAGVs = llegirEnter(scanner, "Quants AGVs es volen a la vegada?");
-        int duracioPrograma = llegirEnter(scanner, "Quants de segons ha de durar el programa? (Ex: 20)") * 1000;
+        int quantCentrals = llegirEnter(scanner, "Quantes centrals de soldadura es volen?", 100);
+        int maximBateries = llegirEnter(scanner, "Quina capacitat de bateries té la cinta?", 1000);
+        int quantRobots = llegirEnter(scanner, "Quants robots es volen a la vegada?", 1000);
+        int quantAGVs = llegirEnter(scanner, "Quants AGVs es volen a la vegada?", 1000);
+        int duracioPrograma = llegirEnter(scanner, "Quants de segons ha de durar el programa? (Ex: 20)", 300) * 1000;
         scanner.close();
 
         // RECURSOS COMPARTITS
@@ -74,6 +73,7 @@ public class App {
 
         // INTERROMPRE FILS
         dashboardThread.interrupt();
+        sensorAvariesThread.interrupt();
         tecnicMantenimentThread.interrupt();
         supervisorTaskThread.interrupt();
         for (int i = 0; i < robots.size(); i++) {
@@ -98,7 +98,7 @@ public class App {
         resum.append("\n======= SIMULACIÓ FINALITZADA =======\n");
         resum.append("Durada: " + (duracioPrograma / 1000) + " s\n");
         resum.append("Cotxos fets: " + centralSoldadura.getCotxosFets() + "\n");
-        resum.append("Estacions finals: " + Arrays.toString(centralSoldadura.getEstacions()) + "\n");
+        resum.append("Estacions finals: "+dashboard.formatarEstacions());
         resum.append("Bateries a la cinta: " + cintaTransportadora.getQuantitatBateries()
                 + "/" + cintaTransportadora.getMaximBateries() + "\n");
         for (RobotTask r : robotTasks) {
@@ -108,10 +108,10 @@ public class App {
     }
 
     // FUNCIONS
-    public static int llegirEnter(Scanner scanner, String pregunta) {
+    public static int llegirEnter(Scanner scanner, String pregunta, int maxim) {
         int resposta = -1;
-        while (resposta <= 0) {
-            System.out.println(pregunta + " Ha de ser un nombre major que 0.");
+        while (resposta <= 0 || resposta > maxim) {
+            System.out.println(pregunta + " Ha de ser un nombre major que 0 i menor o igual que " + maxim + ".");
             if (scanner.hasNextInt()) {
                 resposta = scanner.nextInt();
             } else {

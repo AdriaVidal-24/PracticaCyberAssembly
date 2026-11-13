@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 public class CentralSoldadura {
@@ -10,6 +11,7 @@ public class CentralSoldadura {
     private volatile int cotxosFets = 0;
     private Semaphore sem;
     private Semaphore mutex = new Semaphore(1);
+    private Random rand = new Random();
 
     // CONSTRUCTOR
     public CentralSoldadura(int n) {
@@ -84,7 +86,13 @@ public class CentralSoldadura {
     }
 
     private synchronized void notificarAvaria() {
-        accesLlistaEstacions(-1);
+        while(true) {
+            int estacio = rand.nextInt(llistatEstacions.length);
+            if(llistatEstacions[estacio] == 0) {
+                llistatEstacions[estacio] = -1;
+                break;
+            }
+        }
         notifyAll();
     }
 

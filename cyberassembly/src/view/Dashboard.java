@@ -1,6 +1,5 @@
 package view;
 
-import java.util.Arrays;
 import java.util.List;
 
 import controller.CentralSoldadura;
@@ -30,7 +29,6 @@ public class Dashboard implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 boolean alerta = supervisorCentral.getAlerta();
-                int[] estacions = centralSoldadura.getEstacions();
                 int cotxosFets = centralSoldadura.getCotxosFets();
                 int bateriesMax = cintaTransportadora.getMaximBateries();
                 int bateries = cintaTransportadora.getQuantitatBateries();
@@ -38,7 +36,7 @@ public class Dashboard implements Runnable {
                 StringBuilder analisiActual = new StringBuilder();
                 analisiActual.append("======= TICK =======\n");
                 analisiActual.append("Estat d'alerta: " + alerta + "\n");
-                analisiActual.append("Estacions actuals: " + Arrays.toString(estacions) + "\n");
+                analisiActual.append("Estacions actuals: "+formatarEstacions());
                 analisiActual.append("Cotxos fets: " + cotxosFets + "\n");
                 analisiActual.append("Quantitat de bateries: " + bateries + "\n");
                 analisiActual.append("Màxim de bateries: " + bateriesMax + "\n");
@@ -52,5 +50,30 @@ public class Dashboard implements Runnable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public StringBuilder formatarEstacions() {
+        StringBuilder estacionsString = new StringBuilder();
+        int[] estacions = centralSoldadura.getEstacions();
+
+        estacionsString.append("[");
+        for (int i = 0; i < estacions.length; i++) {
+            if (i != 0) {
+                estacionsString.append(", ");
+            }
+            switch (estacions[i]) {
+                case 0:
+                    estacionsString.append("-");
+                    break;
+                case -1:
+                    estacionsString.append("X");
+                    break;
+                default:
+                    estacionsString.append("R" + estacions[i]);
+                    break;
+            }
+        }
+        estacionsString.append("]\n");
+        return estacionsString;
     }
 }
