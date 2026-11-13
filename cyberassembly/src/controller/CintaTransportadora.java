@@ -5,10 +5,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class CintaTransportadora {
     private int quantitatBateries = 0;
-    private int maximBateries = 10;
+    private int maximBateries;
     private ReentrantLock lock = new ReentrantLock();
     private final Condition cintaNoPlena = lock.newCondition();
     private final Condition cintaNoBuida = lock.newCondition();
+
+    public CintaTransportadora(int maximBateries) {
+        this.maximBateries = maximBateries;
+    }
 
     public void afegirBateria() throws InterruptedException {
         lock.lock();
