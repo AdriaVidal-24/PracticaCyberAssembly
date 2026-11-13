@@ -3,12 +3,15 @@ package tasks;
 import controller.CentralSoldadura;
 
 public class TecnicManteniment implements Runnable {
+    // ATRIBUTS
     private CentralSoldadura centralSoldadura;
 
+    // CONSTRUCTOR
     public TecnicManteniment(CentralSoldadura centralSoldadura) {
         this.centralSoldadura = centralSoldadura;
     }
 
+    // FUNCIONS
     @Override
     public void run() {
         try {
@@ -20,6 +23,5 @@ public class TecnicManteniment implements Runnable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
     }
 }

@@ -5,12 +5,14 @@ import controller.CintaTransportadora;
 import controller.SupervisorCentral;
 
 public class RobotTask implements Runnable {
+    // ATRIBUTS
     private int id;
     private CentralSoldadura centralSoldadura;
     private CintaTransportadora cintaTransportadora;
     private SupervisorCentral supervisorCentral;
     private volatile String estat = "INICIANT";
 
+    // CONSTRUCTOR
     public RobotTask(int id, CentralSoldadura centralSoldadura, CintaTransportadora cintaTransportadora,
             SupervisorCentral supervisorCentral) {
         this.id = id;
@@ -19,6 +21,16 @@ public class RobotTask implements Runnable {
         this.supervisorCentral = supervisorCentral;
     }
 
+    // GETTERS & SETTERS
+    public int getId() {
+        return id;
+    }
+
+    public String getEstat() {
+        return estat;
+    }
+
+    // FUNCIONS
     @Override
     public void run() {
         try {
@@ -45,13 +57,4 @@ public class RobotTask implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getEstat() {
-        return estat;
-    }
-
 }

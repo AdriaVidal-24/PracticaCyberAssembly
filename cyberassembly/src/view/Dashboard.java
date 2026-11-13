@@ -9,11 +9,13 @@ import controller.SupervisorCentral;
 import tasks.RobotTask;
 
 public class Dashboard implements Runnable {
+    // ATRIBUTS
     private CentralSoldadura centralSoldadura;
     private CintaTransportadora cintaTransportadora;
     private SupervisorCentral supervisorCentral;
     private List<RobotTask> llistat;
 
+    // CONSTRUCTOR
     public Dashboard(CentralSoldadura centralSoldadura, CintaTransportadora cintaTransportadora,
             SupervisorCentral supervisorCentral, List<RobotTask> llistat) {
         this.centralSoldadura = centralSoldadura;
@@ -22,6 +24,7 @@ public class Dashboard implements Runnable {
         this.llistat = llistat;
     }
 
+    // FUNCIONS
     @Override
     public void run() {
         try {

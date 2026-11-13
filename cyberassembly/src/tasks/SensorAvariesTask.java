@@ -3,12 +3,15 @@ package tasks;
 import controller.CentralSoldadura;
 
 public class SensorAvariesTask implements Runnable {
+    // ATRIBUTS
     private CentralSoldadura centralSoldadura;
 
+    // CONSTRUCTOR
     public SensorAvariesTask(CentralSoldadura centralSoldadura) {
         this.centralSoldadura = centralSoldadura;
     }
 
+    // FUNCIONS
     @Override
     public void run() {
         try {
@@ -20,5 +23,4 @@ public class SensorAvariesTask implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
-
 }

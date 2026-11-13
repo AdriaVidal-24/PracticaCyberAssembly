@@ -15,46 +15,49 @@ import view.Dashboard;
 
 public class App {
     public static void main(String[] args) throws InterruptedException {
+        // PARÀMETRES
         Scanner scanner = new Scanner(System.in);
-
         int quantCentrals = llegirEnter(scanner, "Quantes centrals de soldadura es volen?");
         int maximBateries = llegirEnter(scanner, "Quina capacitat de bateries té la cinta?");
         int quantRobots = llegirEnter(scanner, "Quants robots es volen a la vegada?");
         int quantAGVs = llegirEnter(scanner, "Quants AGVs es volen a la vegada?");
-
+        int duracioPrograma = llegirEnter(scanner, "Quants de segons ha de durar el programa? (Ex: 20)") * 1000;
         scanner.close();
+
+        // RECURSOS COMPARTITS
         CentralSoldadura centralSoldadura = new CentralSoldadura(quantCentrals);
         CintaTransportadora cintaTransportadora = new CintaTransportadora(maximBateries);
         SupervisorCentral supervisorCentral = new SupervisorCentral();
+
+        // CREAR TASQUES
         SupervisorTask supervisorTask = new SupervisorTask(supervisorCentral);
         TecnicManteniment tecnicManteniment = new TecnicManteniment(centralSoldadura);
         SensorAvariesTask sensorAvariesTask = new SensorAvariesTask(centralSoldadura);
-        int duracioPrograma = 20000;
-        
         List<RobotTask> robotTasks = new ArrayList<>();
         for (int i = 1; i <= quantRobots; i++) {
             robotTasks.add(new RobotTask(i, centralSoldadura, cintaTransportadora, supervisorCentral));
         }
-        
+        Dashboard dashboard = new Dashboard(centralSoldadura, cintaTransportadora, supervisorCentral, robotTasks);
+
+        // CREAR FILS
         List<Thread> robots = new ArrayList<>();
         for (int i = 1; i <= quantRobots; i++) {
             robots.add(new Thread(robotTasks.get(i - 1)));
         }
-        
         List<Thread> agvs = new ArrayList<>();
         for (int i = 0; i < quantAGVs; i++) {
             agvs.add(new Thread(new AGVTask(cintaTransportadora)));
         }
-        
-        Dashboard dashboard = new Dashboard(centralSoldadura, cintaTransportadora, supervisorCentral, robotTasks);
-        
-        Thread sensorAvariesThread = new Thread(sensorAvariesTask);
-        Thread tecnicMantenimentThread = new Thread(tecnicManteniment);
         Thread supervisorTaskThread = new Thread(supervisorTask);
+        Thread tecnicMantenimentThread = new Thread(tecnicManteniment);
+        Thread sensorAvariesThread = new Thread(sensorAvariesTask);
         Thread dashboardThread = new Thread(dashboard);
-        dashboardThread.setDaemon(true);
-        sensorAvariesThread.setDaemon(true);
 
+        // FILS DIMONI
+        sensorAvariesThread.setDaemon(true);
+        dashboardThread.setDaemon(true);
+
+        // INICIAR FILS
         sensorAvariesThread.start();
         tecnicMantenimentThread.start();
         dashboardThread.start();
@@ -66,7 +69,10 @@ public class App {
             agvs.get(i).start();
         }
 
+        // SIMULACIÓ
         Thread.sleep(duracioPrograma);
+
+        // INTERROMPRE FILS
         dashboardThread.interrupt();
         tecnicMantenimentThread.interrupt();
         supervisorTaskThread.interrupt();
@@ -77,6 +83,7 @@ public class App {
             agvs.get(i).interrupt();
         }
 
+        // ESPERAR FILS
         supervisorTaskThread.join();
         tecnicMantenimentThread.join();
         for (int i = 0; i < robots.size(); i++) {
@@ -86,6 +93,7 @@ public class App {
             agvs.get(i).join();
         }
 
+        // RESUM FINAL
         StringBuilder resum = new StringBuilder();
         resum.append("\n======= SIMULACIÓ FINALITZADA =======\n");
         resum.append("Durada: " + (duracioPrograma / 1000) + " s\n");
@@ -99,11 +107,12 @@ public class App {
         System.out.println(resum);
     }
 
+    // FUNCIONS
     public static int llegirEnter(Scanner scanner, String pregunta) {
         int resposta = -1;
         while (resposta <= 0) {
-            System.out.println(pregunta+" Ha de ser un nombre major que 0.");
-            if(scanner.hasNextInt()) {
+            System.out.println(pregunta + " Ha de ser un nombre major que 0.");
+            if (scanner.hasNextInt()) {
                 resposta = scanner.nextInt();
             } else {
                 scanner.next();

@@ -5,13 +5,16 @@ import java.util.Random;
 import controller.SupervisorCentral;
 
 public class SupervisorTask implements Runnable {
+    // ATRIBUTS
     private SupervisorCentral supervisorCentral;
     private Random rand = new Random();
 
+    // CONSTRUCTOR
     public SupervisorTask(SupervisorCentral supervisorCentral) {
         this.supervisorCentral = supervisorCentral;
     }
 
+    // FUNCIONS
     @Override
     public void run() {
         try {
@@ -28,5 +31,4 @@ public class SupervisorTask implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
-
 }

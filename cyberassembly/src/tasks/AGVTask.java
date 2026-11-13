@@ -3,12 +3,15 @@ package tasks;
 import controller.CintaTransportadora;
 
 public class AGVTask implements Runnable {
+    // ATRIBUTS
     private CintaTransportadora cintaTransportadora;
 
+    // CONSTRUCTOR
     public AGVTask(CintaTransportadora cintaTransportadora) {
         this.cintaTransportadora = cintaTransportadora;
     }
 
+    // FUNCIONS
     @Override
     public void run() {
         try {
@@ -19,5 +22,4 @@ public class AGVTask implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
-
 }

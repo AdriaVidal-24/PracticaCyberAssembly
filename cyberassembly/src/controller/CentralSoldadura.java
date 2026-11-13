@@ -4,18 +4,30 @@ import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class CentralSoldadura {
+    // ATRIBUTS
     private int N;
     private int[] llistatEstacions;
     private volatile int cotxosFets = 0;
     private Semaphore sem;
     private Semaphore mutex = new Semaphore(1);
 
+    // CONSTRUCTOR
     public CentralSoldadura(int n) {
         this.N = n;
         this.llistatEstacions = new int[N];
         this.sem = new Semaphore(N);
     }
 
+    // GETTERS & SETTERS
+    public synchronized int[] getEstacions() {
+        return Arrays.copyOf(llistatEstacions, llistatEstacions.length);
+    }
+
+    public int getCotxosFets() {
+        return cotxosFets;
+    }
+
+    // FUNCIONS
     public int accedirCentral(int id) throws InterruptedException {
         sem.acquire();
         return accesLlistaEstacions(id);
@@ -49,21 +61,14 @@ public class CentralSoldadura {
         llistatEstacions[numEstacio] = 0;
     }
 
-    public synchronized int[] getEstacions() {
-        return Arrays.copyOf(llistatEstacions, llistatEstacions.length);
-    }
-
-    public int getCotxosFets() {
-        return cotxosFets;
-    }
-
     public synchronized int esperarAvaria() throws InterruptedException {
         int estacioAvariada = -1;
-        while(estacioAvariada == -1) {
-            for (int i = 0; i<llistatEstacions.length; i++) {
-                if(llistatEstacions[i] == -1) estacioAvariada = i;
+        while (estacioAvariada == -1) {
+            for (int i = 0; i < llistatEstacions.length; i++) {
+                if (llistatEstacions[i] == -1)
+                    estacioAvariada = i;
             }
-            if(estacioAvariada == -1) {
+            if (estacioAvariada == -1) {
                 wait();
             } else {
                 return estacioAvariada;
@@ -73,11 +78,11 @@ public class CentralSoldadura {
     }
 
     public void rompreEstacio() {
-        if(sem.tryAcquire()) {
+        if (sem.tryAcquire()) {
             notificarAvaria();
         }
     }
-    
+
     private synchronized void notificarAvaria() {
         accesLlistaEstacions(-1);
         notifyAll();
