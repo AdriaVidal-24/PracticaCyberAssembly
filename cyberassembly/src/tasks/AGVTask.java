@@ -17,6 +17,7 @@ public class AGVTask implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 cintaTransportadora.afegirBateria();
+                Thread.sleep(5000);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
