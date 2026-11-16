@@ -51,7 +51,7 @@ public class RobotTask implements Runnable {
                 if (supervisorCentral.getAlerta()) {
                     estat = "PAUSAT";
                 }
-                supervisorCentral.verificarEstat(id);
+                supervisorCentral.verificarEstat();
                 estat = "ESPERANT_BATERIA";
                 if (percentatgeBateria <= 20) {
                     cintaTransportadora.retirarBateria();

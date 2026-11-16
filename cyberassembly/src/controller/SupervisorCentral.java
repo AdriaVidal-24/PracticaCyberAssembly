@@ -19,7 +19,7 @@ public class SupervisorCentral {
         notifyAll();
     }
 
-    public synchronized void verificarEstat(int id) throws InterruptedException {
+    public synchronized void verificarEstat() throws InterruptedException {
         while (alerta) {
             wait();
         }

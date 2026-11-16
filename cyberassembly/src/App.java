@@ -69,7 +69,14 @@ public class App {
         }
 
         // SIMULACIÓ
-        Thread.sleep(duracioPrograma);
+        // ACTIVACIÓ ESTÀTICA DE ALERTA
+        Thread.sleep(3000);
+        supervisorCentral.activarAlerta();
+        Thread.sleep(5000);
+        supervisorCentral.resoldreAlerta();
+        
+        Thread.sleep(duracioPrograma - 8000);
+
 
         // INTERROMPRE FILS
         dashboardThread.interrupt();
