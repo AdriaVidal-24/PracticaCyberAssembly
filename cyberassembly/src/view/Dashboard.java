@@ -36,12 +36,13 @@ public class Dashboard implements Runnable {
                 StringBuilder analisiActual = new StringBuilder();
                 analisiActual.append("======= TICK =======\n");
                 analisiActual.append("Estat d'alerta: " + alerta + "\n");
-                analisiActual.append("Estacions actuals: "+formatarEstacions());
+                analisiActual.append("Estacions actuals: " + formatarEstacions());
                 analisiActual.append("Cotxos fets: " + cotxosFets + "\n");
-                analisiActual.append("Quantitat de bateries: " + bateries + "\n");
-                analisiActual.append("Màxim de bateries: " + bateriesMax + "\n");
+                analisiActual.append("Quantitat de bateries: " + bateries + "/"+bateriesMax+"\n");
                 for (RobotTask r : llistat) {
-                    analisiActual.append("Robot " + r.getId() + " estat: " + r.getEstat() + "\n");
+                    analisiActual.append("Robot " + r.getId() + "| Bateria: "
+                            + r.getPercentatgeBateria() + "%. Cotxos fets: " + r.getCotxosFetsRobot() + ". Estat: "
+                            + r.getEstat() + ".\n");
                 }
                 System.out.println(analisiActual);
 

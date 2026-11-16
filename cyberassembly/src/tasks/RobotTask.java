@@ -1,5 +1,7 @@
 package tasks;
 
+import java.util.Random;
+
 import controller.CentralSoldadura;
 import controller.CintaTransportadora;
 import controller.SupervisorCentral;
@@ -10,7 +12,10 @@ public class RobotTask implements Runnable {
     private CentralSoldadura centralSoldadura;
     private CintaTransportadora cintaTransportadora;
     private SupervisorCentral supervisorCentral;
+    private Random rand = new Random();
     private volatile String estat = "INICIANT";
+    private int cotxosFetsRobot = 0;
+    private int percentatgeBateria = 0;
 
     // CONSTRUCTOR
     public RobotTask(int id, CentralSoldadura centralSoldadura, CintaTransportadora cintaTransportadora,
@@ -30,6 +35,14 @@ public class RobotTask implements Runnable {
         return estat;
     }
 
+    public int getPercentatgeBateria() {
+        return percentatgeBateria;
+    }
+
+    public int getCotxosFetsRobot() {
+        return cotxosFetsRobot;
+    }
+
     // FUNCIONS
     @Override
     public void run() {
@@ -40,7 +53,10 @@ public class RobotTask implements Runnable {
                 }
                 supervisorCentral.verificarEstat(id);
                 estat = "ESPERANT_BATERIA";
-                cintaTransportadora.retirarBateria();
+                if (percentatgeBateria <= 20) {
+                    cintaTransportadora.retirarBateria();
+                    percentatgeBateria = 100;
+                }
                 estat = "ESPERANT_ESTACIÓ";
                 int numEstacio = centralSoldadura.accedirCentral(id);
                 try {
@@ -51,6 +67,8 @@ public class RobotTask implements Runnable {
                 }
                 estat = "REGISTRANT";
                 centralSoldadura.registreCentral(id);
+                cotxosFetsRobot++;
+                percentatgeBateria -= rand.nextInt(15) + 5;
             }
         } catch (InterruptedException e) {
             estat = "ATURAT";

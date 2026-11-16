@@ -98,11 +98,13 @@ public class App {
         resum.append("\n======= SIMULACIÓ FINALITZADA =======\n");
         resum.append("Durada: " + (duracioPrograma / 1000) + " s\n");
         resum.append("Cotxos fets: " + centralSoldadura.getCotxosFets() + "\n");
-        resum.append("Estacions finals: "+dashboard.formatarEstacions());
+        resum.append("Estacions finals: " + dashboard.formatarEstacions());
         resum.append("Bateries a la cinta: " + cintaTransportadora.getQuantitatBateries()
                 + "/" + cintaTransportadora.getMaximBateries() + "\n");
         for (RobotTask r : robotTasks) {
-            resum.append("Robot " + r.getId() + ": " + r.getEstat() + "\n");
+            resum.append("Robot " + r.getId() + "| Bateria: "
+                    + r.getPercentatgeBateria() + "%. Cotxos fets: " + r.getCotxosFetsRobot() + ". Estat: "
+                    + r.getEstat() + "\n");
         }
         System.out.println(resum);
     }
